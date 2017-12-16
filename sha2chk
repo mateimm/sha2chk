@@ -24,8 +24,6 @@ hashh=$2				# hash string -- need to save it because the 'set' cmd will give 2nd
 set -- $hash1				# will result in param1 = file hashed value and param2 = file name and location path IF there is a matching hash!
 					# the 'set' command takes the command result from above line 20 and converts each string separated by space into a parameter
 
-echo "hash1 " $hash1
-echo "hashh " $hashh
 if [[ "$1" == "$hashh" ]]; then
 	echo "file hash:" $1		# hash value taken from grep result
 	echo "     hash:" $hashh 	# hash string
