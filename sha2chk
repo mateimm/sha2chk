@@ -1,0 +1,63 @@
+#!/bin/bash
+sha2chq () {
+ 						
+
+if [ $1 = "-h" ] || [ $1 = "--help" ]; then			#  Display Help menu
+	helpsha
+fi
+
+[[ ! -e "$1" ]] && thefile=$(pwd)"/"$1
+
+[[ ! -e "$thefile" ]] && FILE=$1 && export FILE && checkfile 	#  Check if the file exists at current location
+[[ -z "$1" ]] || [[ -z "$2" ]] && usage 			#  Check if parameters empty
+
+
+# Produce the result
+clear
+
+hash1=$(sha256sum $1 | grep $2)
+hashh=$2
+set -- $hash1
+echo $1 
+echo $hashh
+if [[ "$1" == "$hashh" ]]; then
+	echo "
+>> OK <<
+"
+else
+	echo "
+>> HASHES DO NOT MATCH! <<
+"
+fi
+}
+
+usage(){
+echo "Parameters missing
+try: 'sha2chk -h' for help"
+exit 0
+}
+
+helpsha(){
+
+echo "Check SHA256 checksums when you don't have the hash stored in a separate file 
+but have it as a string copied from a website download location
+
+USAGE: sha2chk $(tput bold)-h $(tput sgr0)or $(tput bold)--help $(tput sgr0)displays this help menu
+or     sha2chk FILE HASH
+
+	$(tput bold)FILE $(tput sgr0)is the file you need to check the hash checksum for
+
+	$(tput bold)HASH $(tput sgr0)is the hash string to validate the checksum
+
+Example: 
+sha2chk my_downloaded_file_i386.deb 88c8f3bd6a864f1c95cc04807701b4afd836e6200d165b72cff6b9c27fc6cb54"
+exit 0
+}
+
+checkfile (){
+echo "File '$FILE' not found"
+exit 0
+}
+
+# MAIN call
+sha2chq $1 $2
