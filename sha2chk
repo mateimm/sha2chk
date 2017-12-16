@@ -5,26 +5,35 @@ if [ $1 = "-h" ] || [ $1 = "--help" ]; then			#  Display Help menu
 	helpsha
 fi
 
+#  Exporting the location of file and the filename as a string
+FILE=$1
+export FILE  
+
 #  Check if the file exists at current location or on working directory
-[[ ! -e "$1" ]] && thefile=$(pwd)"/"$1 && [[ ! -e "$thefile" ]] && FILE=$1 && export FILE && errfile 
+[[ ! -e "$1" ]] && thefile=$(pwd)"/"$1 && [[ ! -e "$thefile" ]] && errfile 
 
 [[ -z "$1" ]] || [[ -z "$2" ]] && usage 			#  Check if parameters empty
 
 # Produce the result
 clear
 
-hash1=$(sha256sum $1 | grep $2)
-hashed=$1  	# file name
-hashh=$2	# hash
-set -- $hash1	
+hash1=$(sha256sum $1 | grep $2)		# assigning the comand result to 'hash1' variable, result will be the hash itself pulled out with use of grep
+hashh=$2				# hash string -- need to save it because the 'set' cmd will give 2nd parameter a new value and 
+					# I need to keep the original string from user input
+
+set -- $hash1				# will result in param1 = file hashed value and param2 = file name and location path IF there is a matching hash!
+					# the 'set' command takes the command result from above line 20 and converts each string separated by space into a parameter
+
+echo "hash1 " $hash1
+echo "hashh " $hashh
 if [[ "$1" == "$hashh" ]]; then
 	echo "file hash:" $1		# hash value taken from grep result
-	echo "     hash:" $hashh 	# hash
+	echo "     hash:" $hashh 	# hash string
 	echo "
 >> OK <<
 "
-else
-	echo -n "file hash: " &(sha256sum $hashed | awk '{ print $1 }')
+else					#getting the hash from the file again just for comparison purpose when hashes don't match:
+	echo -n "file hash: " &(sha256sum $FILE | awk '{ print $1 }')  
 	echo "     hash:" $hashh
 	echo "
 >> HASHES DO NOT MATCH! <<
